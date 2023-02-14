@@ -11,13 +11,14 @@
 # Grab the first argument to determine if we're compiling the list of generating
 # the files with the lists of name for each category
 ARG=$1
+echo "${ARG}"
 
 # Colorization
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NOCOLOR='\033[0m'
 
-if [[ "$ARG" -eq "init" ]]
+if [[ "${ARG}" -eq "init" ]]
 then
     # Generate list of files for each category
     touch soc.txt
@@ -36,25 +37,33 @@ then
 
     echo -e "${GREEN}Files generated! Please copy and paste the list of names for each category into the text files.${NOCOLOR}"
     exit 0
-elif [[ "$ARG" -ne "run" ]]
+elif [[ "{$ARG}" -eq "run" ]]
 then
     # 1) Copy all the text files into one master list.
-    # 
-    # 2) awk displays every other line in the file (1, 3, 5, etc...) and displays the 
-    # first through third column. 
-    #
-    # 3) sed searches for the '@' at each line and removes it
-    #
-    # 4) sed then removes the 'Mentee' tag (both ways it might be displayed)
-    #
-    # 5) awk removes any duplicates in the file
+    cat appsec.txt >> list.txt
+    cat devopsec.txt >> list.txt
+    cat dfir.txt >> list.txt
+    cat forensics.txt >> list.txt
+    cat grc.txt >> list.txt
+    cat pentest.txt >> list.txt
+    cat sec_research.txt >> list.txt
+    cat sec_vendor.txt >> list.txt
+    cat soc.txt >> list.txt
+    cat threat_hunt.txt >> list.txt
+    cat threat_intel.txt >> list.txt
+    cat training.txt >> list.txt
+    cat vuln_manage.txt >> list.txt
     
-    awk 'NR%2 {print $1, $2, $3}' ${ARG} | sed 's/@//g' | sed 's/(Mentee)//g' | sed 's/(mentee)//g' | awk '!seen[$0]++'
+    # 2) Remove the blank lines created when we combined the files
+    # 3) Remove the @ symbols from the beginning of the names
+    # 4) Remove the variations of (Mentee) from the names
+    # 5) Remove the duplicates
+    cat list.txt | awk NF | sed 's/@//g' | sed 's/(Mentee)//g' | sed 's/(mentee)//g' | awk '!seen[$0]++' > compiled.txt 
     
-elif [[ -z "$ARG" ]]
+elif [[ -z "{$ARG}" ]]
 then
     echo -e "${RED}An error occurred!${NOCOLOR} Please use the arguement of 'init' to generate lists or 'run' to compile information"
-	exit 1
+    exit 1
 else
     exit 1
 fi
