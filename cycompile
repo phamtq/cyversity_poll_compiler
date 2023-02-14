@@ -1,0 +1,60 @@
+#!/bin/bash
+ 
+# Author: Timothy Pham
+# Date: 02-13-2023
+# Version: 1.0
+#
+# This script takes a list of mentee from a poll and formats it so it's easier 
+# to copy and paste into a spreadsheet. It's easier that typing out or copying
+# and pasting form the Slack channel and then modifying it by hand. 
+
+# Grab the first argument to determine if we're compiling the list of generating
+# the files with the lists of name for each category
+ARG=$1
+
+# Colorization
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NOCOLOR='\033[0m'
+
+if [[ "$ARG" -eq "init" ]]
+then
+    # Generate list of files for each category
+    touch soc.txt
+    touch pentest.txt
+    touch forensics.txt
+    touch sec_research.txt
+    touch threat_intel.txt
+    touch dfir.txt
+    touch devopsec.txt
+    touch threat_hunt.txt
+    touch grc.txt
+    touch vuln_manage.txt
+    touch sec_vendor.txt
+    touch appsec.txt
+    touch training.txt
+
+    echo -e "${GREEN}Files generated! Please copy and paste the list of names for each category into the text files.${NOCOLOR}"
+    exit 0
+elif [[ "$ARG" -ne "run" ]]
+then
+    # 1) Copy all the text files into one master list.
+    # 
+    # 2) awk displays every other line in the file (1, 3, 5, etc...) and displays the 
+    # first through third column. 
+    #
+    # 3) sed searches for the '@' at each line and removes it
+    #
+    # 4) sed then removes the 'Mentee' tag (both ways it might be displayed)
+    #
+    # 5) awk removes any duplicates in the file
+    
+    awk 'NR%2 {print $1, $2, $3}' ${ARG} | sed 's/@//g' | sed 's/(Mentee)//g' | sed 's/(mentee)//g' | awk '!seen[$0]++'
+    
+elif [[ -z "$ARG" ]]
+then
+    echo -e "${RED}An error occurred!${NOCOLOR} Please use the arguement of 'init' to generate lists or 'run' to compile information"
+	exit 1
+else
+    exit 1
+fi
