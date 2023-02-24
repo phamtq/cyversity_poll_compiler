@@ -8,62 +8,58 @@
 # to copy and paste into a spreadsheet. It's easier that typing out or copying
 # and pasting form the Slack channel and then modifying it by hand. 
 
-# Grab the first argument to determine if we're compiling the list of generating
-# the files with the lists of name for each category
+# Grab the first argument to determine if we're compiling the list of 
+# generating the files with the lists of name for each category
+
 ARG=$1
-echo "${ARG}"
+#echo "${ARG}"
 
 # Colorization
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NOCOLOR='\033[0m'
 
-if [[ "${ARG}" -eq "init" ]]
+if [[ "${ARG}" = "init" ]]
 then
     # Generate list of files for each category
-    touch soc.txt
-    touch pentest.txt
-    touch forensics.txt
-    touch sec_research.txt
-    touch threat_intel.txt
-    touch dfir.txt
-    touch devopsec.txt
-    touch threat_hunt.txt
-    touch grc.txt
-    touch vuln_manage.txt
-    touch sec_vendor.txt
-    touch appsec.txt
-    touch training.txt
+    touch soc.txt pentest.txt forensics.txt sec_research.txt threat_intel.txt \
+      dfir.txt devopsec.txt threat_hunt.txt grc.txt vuln_manage.txt \
+      sec_vendor.txt appsec.txt training.txt
 
-    echo -e "${GREEN}Files generated! Please copy and paste the list of names for each category into the text files.${NOCOLOR}"
+    echo -e "${GREEN}Files generated! Please copy and paste the list of names 
+      for each category into the text files.${NOCOLOR}"
+    
     exit 0
-elif [[ "{$ARG}" -eq "run" ]]
+
+elif [[ "${ARG}" = "run" ]]
 then
     # 1) Copy all the text files into one master list.
-    cat appsec.txt >> list.txt
-    cat devopsec.txt >> list.txt
-    cat dfir.txt >> list.txt
-    cat forensics.txt >> list.txt
-    cat grc.txt >> list.txt
-    cat pentest.txt >> list.txt
-    cat sec_research.txt >> list.txt
-    cat sec_vendor.txt >> list.txt
-    cat soc.txt >> list.txt
-    cat threat_hunt.txt >> list.txt
-    cat threat_intel.txt >> list.txt
-    cat training.txt >> list.txt
-    cat vuln_manage.txt >> list.txt
-    
+    { 
+      cat appsec.txt
+      cat devopsec.txt
+      cat dfir.txt
+      cat forensics.txt
+      cat grc.txt
+      cat pentest.txt
+      cat sec_research.txt
+      cat sec_vendor.txt
+      cat soc.txt
+      cat threat_hunt.txt
+      cat threat_intel.txt
+      cat training.txt
+      cat vuln_manage.txt
+    } >> list.txt
     # 2) Remove the blank lines created when we combined the files
     # 3) Remove the @ symbols from the beginning of the names
     # 4) Remove the variations of (Mentee) from the names
     # 5) Remove the duplicates
-    cat list.txt | awk NF | sed 's/@//g' | sed 's/(Mentee)//g' | sed 's/(mentee)//g' | awk '!seen[$0]++' > compiled.txt 
+    < list.txt awk NF | sed 's/@//g' | sed 's/(Mentee)//g' | sed 's/(mentee)//g'\
+      | awk '!seen[$0]++' > compiled.txt 
     
-elif [[ -z "{$ARG}" ]]
+elif [[ -z "${ARG}" ]]
 then
     echo -e "${RED}An error occurred!${NOCOLOR} Please use the arguement of 'init' to generate lists or 'run' to compile information"
     exit 1
 else
-    exit 1
+   exit 1
 fi
