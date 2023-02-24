@@ -58,7 +58,8 @@ then
     
 elif [[ -z "${ARG}" ]]
 then
-    echo -e "${RED}An error occurred!${NOCOLOR} Please use the arguement of 'init' to generate lists or 'run' to compile information"
+    echo -e "${RED}An error occurred!${NOCOLOR} Please use the arguement of 
+      'init' to generate lists or 'run' to compile information"
     exit 1
 else
    exit 1
