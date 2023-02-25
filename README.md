@@ -5,24 +5,24 @@ This project is aimed at transforming the raw poll data posted in the Slack chan
 
 To install this project, you can clone the GitHub repository to your local machine:
 
-...
+```
 git clone https://github.com/phamtq/android_configurator_lite.git 
-...
+```
 
 Once you have cloned the repository, you may need to make sure you have bash installed on your system.
 
 ##Usage
 To use this script, either change the permissions of the file (Linux, Mac, etc...):
 
-...
+```
 chmod 755 ./cycompile
-...
+```
 
 or invoke bash every time you want to run the script:
 
-...
+```
 bash ./cycompile <options>
-...
+```
 
 ## Contributing
 
