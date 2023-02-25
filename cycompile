@@ -48,7 +48,7 @@ then
       cat threat_intel.txt
       cat training.txt
       cat vuln_manage.txt
-    } >> list.txt
+    } > list.txt
     # 2) Remove the blank lines created when we combined the files
     # 3) Remove the @ symbols from the beginning of the names
     # 4) Remove the variations of (Mentee) from the names
@@ -62,8 +62,32 @@ then
       | sed 's/- Mentee//g'\
       | sed 's/,//g' | awk NF\
       | awk '!seen[$0]++'\
-      > compiled.txt 
-   
+      > compiled_names.txt 
+       
+    # Determining trends and producing output
+    # Check total number of respondents
+    RESPONDENTS=$(wc -l compiled_names.txt | sed 's/ compiled_names.txt//g')
+
+    # Question 1: What percentage of people are interested in getting into
+    # 1 area? 3 areas? More than 5 areas?
+    < list.txt awk NF\
+      | sed 's/@//g'\
+      | sed 's/-(Mentee)//g' | sed 's/(Mentee)//g' | sed 's/(Mentee)//g'\
+      | sed 's/(mentee)//g' | sed 's/(Mentee\/Mentor)//g'\
+      | sed 's/(Cyversity, Mentee)//g' | sed 's/-mentee//g'\
+      | sed 's/- Mentee//g'\
+      | sed 's/,//g' | awk NF\
+      | sort | uniq -c | sort -n\
+      > trends_freq_per_person.txt
+    NUMERATOR=$(awk '$1<=1{c++} END {print c+0}' trends_freq_per_person.txt)
+    echo "${NUMERATOR} of ${RESPONDENTS} people said they interested in 1 areas"
+    
+    NUMERATOR=$(awk '$1<=3{c++} END {print c+0}' trends_freq_per_person.txt)
+    echo "${NUMERATOR} of ${RESPONDENTS} people said they interested in 3 or less areas"
+    
+    NUMERATOR=$(awk '$1>=5{c++} END {print c+0}' trends_freq_per_person.txt)
+    echo "${NUMERATOR} of ${RESPONDENTS} people said they interested in more than 5"
+
 elif [[ -z "${ARG}" ]]
 then
     echo -e "${RED}An error occurred!${NOCOLOR} Please use the arguement of 
