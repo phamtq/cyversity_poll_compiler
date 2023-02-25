@@ -52,10 +52,18 @@ then
     # 2) Remove the blank lines created when we combined the files
     # 3) Remove the @ symbols from the beginning of the names
     # 4) Remove the variations of (Mentee) from the names
-    # 5) Remove the duplicates
-    < list.txt awk NF | sed 's/@//g' | sed 's/(Mentee)//g' | sed 's/(mentee)//g'\
-      | awk '!seen[$0]++' > compiled.txt 
-    
+    # 5) Remove stray symbols and the blank line it leaves behind
+    # 6) Remove the duplicates
+    < list.txt awk NF\
+      | sed 's/@//g'\
+      | sed 's/-(Mentee)//g' | sed 's/(Mentee)//g' | sed 's/(Mentee)//g'\
+      | sed 's/(mentee)//g' | sed 's/(Mentee\/Mentor)//g'\
+      | sed 's/(Cyversity, Mentee)//g' | sed 's/-mentee//g'\
+      | sed 's/- Mentee//g'\
+      | sed 's/,//g' | awk NF\
+      | awk '!seen[$0]++'\
+      > compiled.txt 
+   
 elif [[ -z "${ARG}" ]]
 then
     echo -e "${RED}An error occurred!${NOCOLOR} Please use the arguement of 
